@@ -21,7 +21,7 @@ Sentiment Analysis App adalah aplikasi web untuk menampilkan hasil analisis sent
 ## Guide
 1. Clone this repository:
    ```
-   git clone [<repository-url>](https://github.com/nayarasaffa/kazee-frontend-test.git)
+   git clone (https://github.com/nayarasaffa/kazee-frontend-test.git)
    ```
 2. Install dependencies:
    ```
