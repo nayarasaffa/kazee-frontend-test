@@ -5,7 +5,9 @@ import PageHeaderHeading from "./components/custom/PageHeaderHeading.vue";
 
 import sentiment from "@/response.json";
 import DataTable from "./components/ui/table/DataTable.vue";
+import DataChart from "./components/ui/chart-donut/DataChart.vue";
 import { sortableHeader } from "@/components/custom/SortableHeader";
+import { labels } from "@unovis/ts/components/timeline/style";
 
 // Data for Sentiment Table
 const categories = sentiment.data.all.column.categories;
@@ -55,10 +57,30 @@ const sentimentColumn = [
   },
 ];
 
-console.log("categories", categories);
-console.log("series", series);
-console.log("tableData", tableData);
-console.log("sentimentColumn", sentimentColumn);
+// Data for Sentiment Chart
+interface ChartSeries {
+  labels: string[];
+  series: number[];
+}
+
+function prepareDonutData(apiData: any): Record<string, ChartSeries> {
+  const result: Record<string, ChartSeries> = {};
+
+  for (const channel in apiData.data) {
+    if (apiData.data[channel].pie) {
+      const pie = apiData.data[channel].pie;
+      result[channel] = {
+        labels: pie.categories,
+        series: pie.series,
+      };
+    }
+  }
+
+  return result;
+}
+
+const donutChartData = prepareDonutData(sentiment);
+// console.log(donutChartData);
 </script>
 
 <template>
@@ -75,7 +97,7 @@ console.log("sentimentColumn", sentimentColumn);
         <div class="overflow-hidden rounded-lg border bg-background shadow">
           <div style="position: relative">
             <div>
-              <div class="hidden h-full flex-1 flex-col space-y-1 p-8 md:flex">
+              <div class="h-full flex-1 flex-col space-y-1 p-8">
                 <div class="flex items-center justify-between">
                   <div>
                     <h2 class="text-2xl font-bold tracking-tight">
@@ -93,20 +115,29 @@ console.log("sentimentColumn", sentimentColumn);
         </div>
       </div>
     </div>
+
+    <div class="container-wrapper">
+      <div class="w-full py-6">
+        <div class="overflow-hidden rounded-lg border bg-background shadow">
+          <div style="position: relative">
+            <div>
+              <div class="h-full flex-1 flex-col space-y-5 p-8">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h2 class="text-2xl font-bold tracking-tight">
+                      Sentiment Chart
+                    </h2>
+                    <p class="text-muted-foreground">
+                      Here's a Chart of sentiment analysis results.
+                    </p>
+                  </div>
+                </div>
+                <DataChart :chart-data="donutChartData" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
